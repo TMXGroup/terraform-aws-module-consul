@@ -85,7 +85,3 @@ output "consul_lb_dns" {
 output "consul_asg_id" {
   value = "${element(concat(aws_autoscaling_group.consul.*.id, list("")), 0)}" # TODO: Workaround for issue #11210
 }
-
-output "consul_username" {
-  value = "${lookup(var.users, var.os)}"
-}
