@@ -9,23 +9,6 @@ module "consul_auto_join_instance_role" {
   name   = "${var.name}"
 }
 
-data "aws_ami" "consul" {
-  count       = "${var.create && var.image_id == "" ? 1 : 0}"
-  most_recent = true
-  owners      = ["${var.ami_owner}"]
-  name_regex  = "consul-image_${lower(var.release_version)}_consul_${lower(var.consul_version)}_${lower(var.os)}_${var.os_version}.*"
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-}
-
 data "template_file" "consul_init" {
   count    = "${var.create ? 1 : 0}"
   template = "${file("${path.module}/templates/init-systemd.sh.tpl")}"
@@ -64,7 +47,7 @@ resource "aws_launch_configuration" "consul" {
   associate_public_ip_address = "${var.public}"
   ebs_optimized               = false
   instance_type               = "${var.instance_type}"
-  image_id                    = "${var.image_id != "" ? var.image_id : element(concat(data.aws_ami.consul.*.id, list("")), 0)}" # TODO: Workaround for issue #11210
+  image_id                    = "${var.image_id}"
   iam_instance_profile        = "${var.instance_profile != "" ? var.instance_profile : module.consul_auto_join_instance_role.instance_profile_id}"
   user_data                   = "${data.template_file.consul_init.rendered}"
   key_name                    = "${var.ssh_key_name}"
