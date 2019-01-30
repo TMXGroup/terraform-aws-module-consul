@@ -1,5 +1,4 @@
-# AWS Consul Terraform Module (Exteranl Fork)
-
+# AWS Consul Terraform Module
 Creates a standard Consul cluster in AWS that includes:
 
 - A Consul cluster with one node in each private subnet
