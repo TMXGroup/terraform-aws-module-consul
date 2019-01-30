@@ -46,6 +46,16 @@ variable "subnet_ids" {
   type        = "list"
 }
 
+variable "vault_sg_id" {
+  description = "vault cluster sg id."
+
+}
+
+variable "bastion_ip" {
+  description = "bastion host IP."
+
+}
+
 variable "public" {
   description = "Open up nodes to the public internet for easy access - DO NOT DO THIS IN PROD, defaults to false."
   default     = false

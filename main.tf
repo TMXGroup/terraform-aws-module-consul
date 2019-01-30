@@ -20,13 +20,14 @@ data "template_file" "consul_init" {
 }
 
 module "consul_server_sg" {
-  source = "github.com/hashicorp-modules/consul-server-ports-aws"
+  source = "github.com/TMXGroup/terraform-aws-module-consul-server-ports"
 
-  create      = "${var.create ? 1 : 0}"
-  name        = "${var.name}-consul-server"
-  vpc_id      = "${var.vpc_id}"
-  cidr_blocks = ["${var.public ? "0.0.0.0/0" : var.vpc_cidr}"] # If there's a public IP, open Consul ports for public access - DO NOT DO THIS IN PROD
-  tags        = "${var.tags}"
+  create            = "${var.create ? 1 : 0}"
+  name              = "${var.name}-consul-server"
+  vpc_id            = "${var.vpc_id}"
+  cidr_blocks       = ["${var.public ? "0.0.0.0/0" : var.vpc_cidr}"] # If there's a public IP, open Consul ports for public access - DO NOT DO THIS IN PROD
+  vault_sg_group   = "${var.vault_sg_id}" 
+  tags              = "${var.tags}"
 }
 
 resource "aws_security_group_rule" "ssh" {
@@ -37,7 +38,7 @@ resource "aws_security_group_rule" "ssh" {
   protocol          = "tcp"
   from_port         = 22
   to_port           = 22
-  cidr_blocks       = ["${var.public ? "0.0.0.0/0" : var.vpc_cidr}"] # If there's a public IP, open port 22 for public access - DO NOT DO THIS IN PROD
+  cidr_blocks       = ["${var.bastion_ip}"] 
 }
 
 resource "aws_launch_configuration" "consul" {
@@ -59,27 +60,6 @@ resource "aws_launch_configuration" "consul" {
   lifecycle {
     create_before_destroy = true
   }
-}
-
-module "consul_lb_aws" {
-  source = "github.com/hashicorp-modules/consul-lb-aws"
-
-  create             = "${var.create}"
-  name               = "${var.name}"
-  vpc_id             = "${var.vpc_id}"
-  cidr_blocks        = ["${var.public ? "0.0.0.0/0" : var.vpc_cidr}"] # If there's a public IP, open port 22 for public access - DO NOT DO THIS IN PROD
-  subnet_ids         = ["${var.subnet_ids}"]
-  is_internal_lb     = "${!var.public}"
-  use_lb_cert        = "${var.use_lb_cert}"
-  lb_cert            = "${var.lb_cert}"
-  lb_private_key     = "${var.lb_private_key}"
-  lb_cert_chain      = "${var.lb_cert_chain}"
-  lb_ssl_policy      = "${var.lb_ssl_policy}"
-  lb_bucket          = "${var.lb_bucket}"
-  lb_bucket_override = "${var.lb_bucket_override}"
-  lb_bucket_prefix   = "${var.lb_bucket_prefix}"
-  lb_logs_enabled    = "${var.lb_logs_enabled}"
-  tags               = "${var.tags}"
 }
 
 resource "aws_autoscaling_group" "consul" {
