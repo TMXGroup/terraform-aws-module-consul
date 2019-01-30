@@ -48,6 +48,7 @@ module "consul_lb_aws" {
   lb_bucket_override = "${var.lb_bucket_override}"
   lb_bucket_prefix   = "${var.lb_bucket_prefix}"
   lb_logs_enabled    = "${var.lb_logs_enabled}"
+  s3_logging_target  = "${var.s3_logging_target}"
   tags               = "${var.tags}"
 }
 

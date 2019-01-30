@@ -18,6 +18,10 @@ variable "release_version" {
   default     = "0.1.0"
 }
 
+variable " s3_logging_target" {
+  description = "S3 Logging target"
+}
+
 variable "consul_version" {
   description = "Consul version tag (e.g. 1.2.3 or 1.2.3-ent), defaults to \"1.2.3\"."
   default     = "1.2.3"
