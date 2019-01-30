@@ -60,6 +60,7 @@ resource "aws_security_group_rule" "ssh" {
   from_port         = 22
   to_port           = 22
   cidr_blocks       = ["${var.bastion_ip}"] 
+  description       = "Bastion host"
 }
 
 resource "aws_launch_configuration" "consul" {
