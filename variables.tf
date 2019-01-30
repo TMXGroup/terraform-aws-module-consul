@@ -18,7 +18,7 @@ variable "release_version" {
   default     = "0.1.0"
 }
 
-variable " s3_logging_target" {
+variable "s3_logging_target" {
   description = "S3 Logging target"
 }
 
